@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:roncafeapp_manager/screens/annoucement_screen.dart';
 import 'package:roncafeapp_manager/screens/application_screen.dart';
+import 'package:roncafeapp_manager/screens/customization_screen.dart';
 import 'package:roncafeapp_manager/screens/dashboard_screen.dart';
+import 'package:roncafeapp_manager/screens/games_screen.dart';
+import 'package:roncafeapp_manager/screens/settings_screen.dart';
 
 class RonCafeNavigationBarWidget extends StatefulWidget {
   @override
@@ -13,8 +17,9 @@ class _NavigationBarState extends State<RonCafeNavigationBarWidget> {
   final List<Widget> _screens = [
     const DashboardScreen(),
     const ApplicationScreen(),
-    const GamesManagementScreen(),
+    const GamesScreen(),
     const CustomizeScreen(),
+    const AnnouncementScreen(),
     const SettingsScreen(),
   ];
 
