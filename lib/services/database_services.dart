@@ -1,6 +1,7 @@
-// database_service.dart
 import 'dart:io';
 import 'dart:async';
+import 'package:roncafeapp_manager/models/app_item.dart';
+import 'package:roncafeapp_manager/models/launcher_config.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -75,7 +76,9 @@ class DatabaseService {
       )
     ''');
 
-    await db.execute('CREATE INDEX idx_running_category ON RunningProcesses(Category)');
+    await db.execute(
+      'CREATE INDEX idx_running_category ON RunningProcesses(Category)',
+    );
 
     await db.rawInsert('INSERT OR IGNORE INTO LauncherConfig (Id) VALUES (1)');
   }
@@ -84,93 +87,27 @@ class DatabaseService {
     if (oldVersion < 2) {
       // Add any future migrations
       try {
-        await db.execute('ALTER TABLE LauncherConfig ADD COLUMN WallpaperPath TEXT');
+        await db.execute(
+          'ALTER TABLE LauncherConfig ADD COLUMN WallpaperPath TEXT',
+        );
       } catch (e) {
         print('Column already exists: $e');
       }
     }
   }
 
-  // Model classes
-  class LauncherConfig {
-    final String backgroundColor;
-    final String sidebarColor;
-    final String accentColor;
-    final bool useCoverArtView;
-    final String wallpaperPath;
-    final List<AppItem> apps;
-
-    LauncherConfig({
-      this.backgroundColor = '#1E1E2E',
-      this.sidebarColor = '#181825',
-      this.accentColor = '#89B4FA',
-      this.useCoverArtView = false,
-      this.wallpaperPath = '',
-      this.apps = const [],
-    });
-
-    Map<String, dynamic> toMap() => {
-          'BackgroundColor': backgroundColor,
-          'SidebarColor': sidebarColor,
-          'AccentColor': accentColor,
-          'UseCoverArtView': useCoverArtView ? 1 : 0,
-          'WallpaperPath': wallpaperPath,
-        };
-
-    factory LauncherConfig.fromMap(Map<String, dynamic> map) => LauncherConfig(
-          backgroundColor: map['BackgroundColor'] ?? '#1E1E2E',
-          sidebarColor: map['SidebarColor'] ?? '#181825',
-          accentColor: map['AccentColor'] ?? '#89B4FA',
-          useCoverArtView: map['UseCoverArtView'] == 1,
-          wallpaperPath: map['WallpaperPath'] ?? '',
-        );
-  }
-
-  class AppItem {
-    final int? id;
-    final String name;
-    final String category;
-    final String executionPath;
-    final String iconPath;
-    final String coverArtPath;
-
-    AppItem({
-      this.id,
-      required this.name,
-      required this.category,
-      required this.executionPath,
-      this.iconPath = '/Assets/placeholder.png',
-      this.coverArtPath = '/Assets/placeholder.png',
-    });
-
-    Map<String, dynamic> toMap() => {
-          if (id != null) 'Id': id,
-          'Name': name,
-          'Category': category,
-          'ExecutionPath': executionPath,
-          'IconPath': iconPath,
-          'CoverArtPath': coverArtPath,
-        };
-
-    factory AppItem.fromMap(Map<String, dynamic> map) => AppItem(
-          id: map['Id'],
-          name: map['Name'],
-          category: map['Category'],
-          executionPath: map['ExecutionPath'],
-          iconPath: map['IconPath'] ?? '/Assets/placeholder.png',
-          coverArtPath: map['CoverArtPath'] ?? '/Assets/placeholder.png',
-        );
-  }
-
   // ─── Config Methods ──────────────────────────────────────────────────────
   Future<LauncherConfig> loadConfig() async {
     final db = await database;
-    
+
     final result = await db.query(
       'LauncherConfig',
       columns: [
-        'BackgroundColor', 'SidebarColor', 'AccentColor', 
-        'UseCoverArtView', 'WallpaperPath'
+        'BackgroundColor',
+        'SidebarColor',
+        'AccentColor',
+        'UseCoverArtView',
+        'WallpaperPath',
       ],
       where: 'Id = 1',
     );
@@ -204,11 +141,8 @@ class DatabaseService {
   // ─── App Methods ─────────────────────────────────────────────────────────
   Future<List<AppItem>> loadApps() async {
     final db = await database;
-    
-    final result = await db.query(
-      'Apps',
-      orderBy: 'Category, Name',
-    );
+
+    final result = await db.query('Apps', orderBy: 'Category, Name');
 
     return result.map((row) => AppItem.fromMap(row)).toList();
   }
@@ -226,33 +160,20 @@ class DatabaseService {
     if (app.id == null) {
       throw Exception('Cannot update app without Id');
     }
-    
+
     final db = await database;
-    await db.update(
-      'Apps',
-      app.toMap(),
-      where: 'Id = ?',
-      whereArgs: [app.id],
-    );
+    await db.update('Apps', app.toMap(), where: 'Id = ?', whereArgs: [app.id]);
   }
 
   Future<void> deleteApp(int appId) async {
     final db = await database;
-    await db.delete(
-      'Apps',
-      where: 'Id = ?',
-      whereArgs: [appId],
-    );
+    await db.delete('Apps', where: 'Id = ?', whereArgs: [appId]);
   }
 
   Future<AppItem?> getAppById(int appId) async {
     final db = await database;
-    
-    final result = await db.query(
-      'Apps',
-      where: 'Id = ?',
-      whereArgs: [appId],
-    );
+
+    final result = await db.query('Apps', where: 'Id = ?', whereArgs: [appId]);
 
     if (result.isNotEmpty) {
       return AppItem.fromMap(result.first);
@@ -261,17 +182,17 @@ class DatabaseService {
   }
 
   // ─── Running Process Tracking ────────────────────────────────────────────
-  Future<void> logProcessStart(int appId, int processId, String category) async {
+  Future<void> logProcessStart(
+    int appId,
+    int processId,
+    String category,
+  ) async {
     final db = await database;
-    await db.insert(
-      'RunningProcesses',
-      {
-        'ProcessId': processId,
-        'AppId': appId,
-        'Category': category,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await db.insert('RunningProcesses', {
+      'ProcessId': processId,
+      'AppId': appId,
+      'Category': category,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> logProcessEnd(int processId) async {
@@ -283,9 +204,10 @@ class DatabaseService {
     );
   }
 
-  Future<List<(int processId, String category)>> getRunningGameProcesses() async {
+  Future<List<(int processId, String category)>>
+  getRunningGameProcesses() async {
     final db = await database;
-    
+
     final result = await db.query(
       'RunningProcesses',
       columns: ['ProcessId', 'Category'],
@@ -293,14 +215,18 @@ class DatabaseService {
       whereArgs: ['Games'],
     );
 
-    return result.map((row) => (row['ProcessId'] as int, row['Category'] as String)).toList();
+    return result
+        .map((row) => (row['ProcessId'] as int, row['Category'] as String))
+        .toList();
   }
 
   Future<int> getRunningProcessCount({String? category}) async {
     final db = await database;
-    
+
     if (category == null) {
-      final result = await db.rawQuery('SELECT COUNT(*) as count FROM RunningProcesses');
+      final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM RunningProcesses',
+      );
       return (result.first['count'] as int?) ?? 0;
     } else {
       final result = await db.rawQuery(
