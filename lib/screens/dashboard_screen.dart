@@ -10,17 +10,17 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Dashboard')),
       body: Container(
         child: Padding(
-          padding: EdgeInsetsGeometry.all(16),
+          padding: EdgeInsetsGeometry.all(24),
           child: Column(
             children: [
               Text('Welcome to the Dashboard!'),
               Row(
                 children: [
                   dashboardCards0(text: "Total Launches", value: "1223"),
-                  Spacer(),
-                  dashboardCards0(text: "Total Launches", value: "1223"),
-                  Spacer(),
-                  dashboardCards0(text: "Total Launches", value: "1223"),
+                  SizedBox(width: 100.0),
+                  dashboardCards0(text: "Games Played", value: "0"),
+                  SizedBox(width: 100.0),
+                  dashboardCards0(text: "Top Game", value: "Minecraft"),
                 ],
               ),
             ],

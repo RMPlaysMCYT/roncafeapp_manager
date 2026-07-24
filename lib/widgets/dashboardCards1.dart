@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class dashboardCards0 extends StatelessWidget {
+class dashboardCards1 extends StatelessWidget {
   final String text;
   final String value;
 
@@ -9,7 +9,7 @@ class dashboardCards0 extends StatelessWidget {
   final IconData? icon;
   final double borderRadius;
 
-  const dashboardCards0({
+  const dashboardCards1({
     super.key,
     required this.text,
     required this.value,
@@ -24,7 +24,8 @@ class dashboardCards0 extends StatelessWidget {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16.0),
-        height: 160.0, // Fixed height
+        height: 90.0, // Fixed height
+        width: 80.0, // Fixed height
         decoration: BoxDecoration(
           color: backgroundColor ?? Colors.blue,
           borderRadius: BorderRadius.circular(borderRadius),
@@ -44,7 +45,7 @@ class dashboardCards0 extends StatelessWidget {
                     offset: const Offset(2.0, 2.0),
                   ),
                 ],
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -54,7 +55,7 @@ class dashboardCards0 extends StatelessWidget {
                 value,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 50,
+                  fontSize: 24,
                   fontWeight: FontWeight.w900,
                   shadows: [
                     Shadow(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:roncafeapp_manager/widgets/dashboardCards1.dart';
+import 'package:roncafeapp_manager/widgets/searchBarWidget.dart';
 
 class AnnouncementScreen extends StatelessWidget {
   const AnnouncementScreen({super.key});
@@ -8,9 +10,46 @@ class AnnouncementScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Announcements'),
+        foregroundColor: Colors.white,
       ),
-      body: const Center(
-        child: Text('Welcome to the Announcements!'),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Welcome to the Announcements!',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Game of the Day',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+
+            // Use Column or wrap in Expanded
+            Row(
+              children: [
+                Searchbarwidget(), // ✅ Now it works
+                SizedBox(width: 128),
+
+                Wrap(
+                  spacing: 10.0,
+                  runSpacing: 10.0,
+                  children: [
+                    dashboardCards1(text: "Test", value: "12"),
+                    dashboardCards1(text: "Test", value: "12"),
+                    dashboardCards1(text: "Test", value: "12"),
+                    dashboardCards1(text: "Test", value: "12"),
+                    dashboardCards1(text: "Test", value: "12"),
+                    dashboardCards1(text: "Test", value: "12"),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
