@@ -10,13 +10,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      themeMode: ThemeMode.dark,
       home: SplashScreenState(),
     );
   }
 }
-
 
 class SplashScreenState extends StatefulWidget {
   const SplashScreenState({super.key});
@@ -42,7 +43,7 @@ class _SplashScreenState extends State<SplashScreenState> {
     return Scaffold(
       body: Center(
         child: Image.asset(
-          'assets/images/roncafe_logo.png',
+          'assets/icons/3_objectsicon.png',
           width: 200,
           height: 200,
         ),
