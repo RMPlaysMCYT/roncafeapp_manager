@@ -1,4 +1,3 @@
-// widgets/sync_status_widget.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // Fix this import - remove 'providers/' and use correct path

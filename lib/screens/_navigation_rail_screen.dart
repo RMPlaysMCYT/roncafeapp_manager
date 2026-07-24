@@ -1,7 +1,5 @@
-// screens/_navigation_rail_screen.dart
 import 'package:flutter/material.dart';
-import 'package:roncafeapp_manager/screens/annoucement_screen.dart';
-// Fix this - change 'annoucement_screen.dart' to 'announcement_screen.dart'
+import 'package:roncafeapp_manager/screens/announcement_screen.dart';
 import 'package:roncafeapp_manager/screens/application_screen.dart';
 import 'package:roncafeapp_manager/screens/customization_screen.dart';
 import 'package:roncafeapp_manager/screens/dashboard_screen.dart';

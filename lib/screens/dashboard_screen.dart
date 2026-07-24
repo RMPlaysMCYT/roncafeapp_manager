@@ -1,4 +1,3 @@
-// screens/dashboard_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:roncafeapp_manager/services/database_services.dart';
@@ -175,18 +174,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Color color,
     VoidCallback onTap,
   ) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(8),
+    // Fixed: Wrap ListTile with Material and add a background
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color),
         ),
-        child: Icon(icon, color: color),
+        title: Text(title),
+        trailing: const Icon(Icons.chevron_right_rounded),
+        onTap: onTap,
+        // Add these to fix the warning
+        tileColor: Colors.transparent,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: onTap,
     );
   }
 }

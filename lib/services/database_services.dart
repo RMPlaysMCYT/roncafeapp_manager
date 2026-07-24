@@ -1,9 +1,9 @@
-// services/database_services.dart
 import 'dart:io';
 import 'dart:async';
 import 'package:roncafeapp_manager/models/app_item.dart';
 import 'package:roncafeapp_manager/models/launcher_config.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -17,12 +17,22 @@ class DatabaseService {
 
   // Factory constructor for custom path
   factory DatabaseService.fromPath(String path) {
+    // Ensure FFI is initialized for desktop
+    _ensureFfiInitialized();
     final instance = DatabaseService();
     _customDbPath = path;
     return instance;
   }
 
+  static void _ensureFfiInitialized() {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      // Initialize sqflite_common_ffi for desktop
+      sqfliteFfiInit();
+    }
+  }
+
   Future<Database> get database async {
+    _ensureFfiInitialized();
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
@@ -50,6 +60,7 @@ class DatabaseService {
     );
   }
 
+  // ─── Database Schema ──────────────────────────────────────────────────────
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE LauncherConfig (

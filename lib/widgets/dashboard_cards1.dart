@@ -21,11 +21,12 @@ class dashboardCards1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    // Fixed: Use SizedBox with fixed width instead of Expanded
+    return SizedBox(
+      width: 120, // Fixed width for each card
       child: Container(
-        padding: const EdgeInsets.all(16.0),
-        height: 90.0, // Fixed height
-        width: 80.0, // Fixed height
+        padding: const EdgeInsets.all(12.0),
+        height: 90.0,
         decoration: BoxDecoration(
           color: backgroundColor ?? Colors.blue,
           borderRadius: BorderRadius.circular(borderRadius),

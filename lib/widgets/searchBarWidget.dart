@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class Searchbarwidget extends StatelessWidget {
-  const Searchbarwidget({super.key});
+class SearchBarWidget extends StatelessWidget {
+  const SearchBarWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 500, // Give it a fixed width or use constraints
+      width: 500,
       height: 50,
       decoration: BoxDecoration(
         color: const Color(0xFF22BBAA),
