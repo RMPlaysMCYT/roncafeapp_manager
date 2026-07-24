@@ -103,28 +103,13 @@ class SyncStatusWidget extends StatelessWidget {
                     ),
                   ),
                 ListTile(
-                  leading: const Icon(Icons.download_rounded),
-                  title: const Text('Sync from Avalonia'),
-                  subtitle: Text(
-                    syncService.lastSyncTime != null
-                        ? 'Last: ${syncService.lastSyncTime!.toLocal().toString()}'
-                        : 'Never synced',
-                  ),
-                  onTap: syncService.isSyncing
-                      ? null
-                      : () async {
-                          Navigator.pop(context);
-                          await syncService.syncFromAvalonia();
-                        },
-                ),
-                ListTile(
                   leading: const Icon(Icons.upload_rounded),
                   title: const Text('Sync to Avalonia'),
                   onTap: syncService.isSyncing
                       ? null
                       : () async {
                           Navigator.pop(context);
-                          await syncService.syncToAvalonia();
+                          await syncService.syncToClient();
                         },
                 ),
                 if (syncService.syncedAppsCount > 0)

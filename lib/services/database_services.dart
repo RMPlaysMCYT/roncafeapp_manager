@@ -1,3 +1,4 @@
+// services/database_services.dart
 import 'dart:io';
 import 'dart:async';
 import 'package:roncafeapp_manager/models/app_item.dart';
@@ -15,9 +16,32 @@ class DatabaseService {
   static Database? _database;
   static String? _customDbPath;
 
+  // Get the C# client database path
+  static String getClientDbPath() {
+    if (Platform.isWindows) {
+      final userProfile =
+          Platform.environment['USERPROFILE'] ??
+          Platform.environment['HOME'] ??
+          '.';
+      return join(userProfile, 'Documents', 'RonCafeApp', 'RonCafeLauncher.db');
+    } else if (Platform.isLinux) {
+      final home = Platform.environment['HOME'] ?? '.';
+      return join(home, '.local', 'share', 'RonCafeApp', 'RonCafeLauncher.db');
+    } else if (Platform.isMacOS) {
+      final home = Platform.environment['HOME'] ?? '.';
+      return join(
+        home,
+        'Library',
+        'Application Support',
+        'RonCafeApp',
+        'RonCafeLauncher.db',
+      );
+    }
+    return '';
+  }
+
   // Factory constructor for custom path
   factory DatabaseService.fromPath(String path) {
-    // Ensure FFI is initialized for desktop
     _ensureFfiInitialized();
     final instance = DatabaseService();
     _customDbPath = path;
@@ -26,8 +50,11 @@ class DatabaseService {
 
   static void _ensureFfiInitialized() {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      // Initialize sqflite_common_ffi for desktop
-      sqfliteFfiInit();
+      try {
+        sqfliteFfiInit();
+      } catch (e) {
+        print('FFI already initialized or error: $e');
+      }
     }
   }
 
@@ -42,12 +69,16 @@ class DatabaseService {
     if (_customDbPath != null) {
       return _customDbPath!;
     }
-    final documentsDir = await getApplicationDocumentsDirectory();
-    final appDir = Directory(join(documentsDir.path, 'CafeLauncher'));
-    if (!await appDir.exists()) {
-      await appDir.create(recursive: true);
+    // Use the C# client database path
+    final clientPath = getClientDbPath();
+
+    // Create directory if it doesn't exist
+    final dir = Directory(dirname(clientPath));
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
     }
-    return join(appDir.path, 'CafeLauncher.db');
+
+    return clientPath;
   }
 
   Future<Database> _initDatabase() async {
@@ -63,7 +94,7 @@ class DatabaseService {
   // ─── Database Schema ──────────────────────────────────────────────────────
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE LauncherConfig (
+      CREATE TABLE IF NOT EXISTS LauncherConfig (
         Id INTEGER PRIMARY KEY CHECK (Id = 1),
         BackgroundColor TEXT NOT NULL DEFAULT '#1E1E2E',
         SidebarColor TEXT NOT NULL DEFAULT '#181825',
@@ -75,7 +106,7 @@ class DatabaseService {
     ''');
 
     await db.execute('''
-      CREATE TABLE Apps (
+      CREATE TABLE IF NOT EXISTS Apps (
         Id INTEGER PRIMARY KEY AUTOINCREMENT,
         Name TEXT NOT NULL UNIQUE,
         Category TEXT NOT NULL,
@@ -88,10 +119,12 @@ class DatabaseService {
       )
     ''');
 
-    await db.execute('CREATE INDEX idx_apps_category ON Apps(Category)');
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_apps_category ON Apps(Category)',
+    );
 
     await db.execute('''
-      CREATE TABLE RunningProcesses (
+      CREATE TABLE IF NOT EXISTS RunningProcesses (
         ProcessId INTEGER PRIMARY KEY,
         AppId INTEGER NOT NULL,
         Category TEXT NOT NULL,
@@ -101,7 +134,7 @@ class DatabaseService {
     ''');
 
     await db.execute(
-      'CREATE INDEX idx_running_category ON RunningProcesses(Category)',
+      'CREATE INDEX IF NOT EXISTS idx_running_category ON RunningProcesses(Category)',
     );
 
     await db.rawInsert('INSERT OR IGNORE INTO LauncherConfig (Id) VALUES (1)');
@@ -168,12 +201,10 @@ class DatabaseService {
     );
   }
 
-  // ─── App Methods ─────────────────────────────────────────────────────────
+  // ─── App Methods (Full CRUD for Admin) ──────────────────────────────────
   Future<List<AppItem>> loadApps() async {
     final db = await database;
-
     final result = await db.query('Apps', orderBy: 'Category, Name');
-
     return result.map((row) => AppItem.fromMap(row)).toList();
   }
 
@@ -202,9 +233,7 @@ class DatabaseService {
 
   Future<AppItem?> getAppById(int appId) async {
     final db = await database;
-
     final result = await db.query('Apps', where: 'Id = ?', whereArgs: [appId]);
-
     if (result.isNotEmpty) {
       return AppItem.fromMap(result.first);
     }
@@ -213,9 +242,7 @@ class DatabaseService {
 
   Future<AppItem?> getAppByName(String name) async {
     final db = await database;
-
     final result = await db.query('Apps', where: 'Name = ?', whereArgs: [name]);
-
     if (result.isNotEmpty) {
       return AppItem.fromMap(result.first);
     }
@@ -248,14 +275,12 @@ class DatabaseService {
   Future<List<(int processId, String category)>>
   getRunningGameProcesses() async {
     final db = await database;
-
     final result = await db.query(
       'RunningProcesses',
       columns: ['ProcessId', 'Category'],
       where: 'Category = ?',
       whereArgs: ['Games'],
     );
-
     return result
         .map((row) => (row['ProcessId'] as int, row['Category'] as String))
         .toList();
@@ -263,7 +288,6 @@ class DatabaseService {
 
   Future<int> getRunningProcessCount({String? category}) async {
     final db = await database;
-
     if (category == null) {
       final result = await db.rawQuery(
         'SELECT COUNT(*) as count FROM RunningProcesses',

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:roncafeapp_manager/screens/__addprogram.dart';
+import 'package:roncafeapp_manager/screens/__customize_screen.dart';
 import 'package:roncafeapp_manager/services/database_services.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -105,8 +107,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Icons.add_rounded,
                             Colors.blue,
                             () {
-                              // Navigate to Applications tab
-                              // You can use a GlobalKey or callback
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AddProgramScreen(),
+                                ),
+                              );
                             },
                           ),
                           const Divider(),
@@ -124,7 +131,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Icons.palette_rounded,
                             Colors.purple,
                             () {
-                              // Navigate to Customize tab
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CustomizeScreen(),
+                                ),
+                              );
                             },
                           ),
                         ],
