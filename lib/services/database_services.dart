@@ -1,3 +1,4 @@
+// services/database_services.dart
 import 'dart:io';
 import 'dart:async';
 import 'package:roncafeapp_manager/models/app_item.dart';
@@ -12,6 +13,14 @@ class DatabaseService {
   DatabaseService._internal();
 
   static Database? _database;
+  static String? _customDbPath;
+
+  // Factory constructor for custom path
+  factory DatabaseService.fromPath(String path) {
+    final instance = DatabaseService();
+    _customDbPath = path;
+    return instance;
+  }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -20,6 +29,9 @@ class DatabaseService {
   }
 
   Future<String> get _dbPath async {
+    if (_customDbPath != null) {
+      return _customDbPath!;
+    }
     final documentsDir = await getApplicationDocumentsDirectory();
     final appDir = Directory(join(documentsDir.path, 'CafeLauncher'));
     if (!await appDir.exists()) {
@@ -59,6 +71,7 @@ class DatabaseService {
         ExecutionPath TEXT NOT NULL,
         IconPath TEXT NOT NULL DEFAULT '/Assets/placeholder.png',
         CoverArtPath TEXT NOT NULL DEFAULT '/Assets/placeholder.png',
+        LastModified DATETIME DEFAULT CURRENT_TIMESTAMP,
         CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
         UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -85,7 +98,6 @@ class DatabaseService {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
-      // Add any future migrations
       try {
         await db.execute(
           'ALTER TABLE LauncherConfig ADD COLUMN WallpaperPath TEXT',
@@ -93,6 +105,13 @@ class DatabaseService {
       } catch (e) {
         print('Column already exists: $e');
       }
+    }
+  }
+
+  Future<void> close() async {
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
     }
   }
 
@@ -174,6 +193,17 @@ class DatabaseService {
     final db = await database;
 
     final result = await db.query('Apps', where: 'Id = ?', whereArgs: [appId]);
+
+    if (result.isNotEmpty) {
+      return AppItem.fromMap(result.first);
+    }
+    return null;
+  }
+
+  Future<AppItem?> getAppByName(String name) async {
+    final db = await database;
+
+    final result = await db.query('Apps', where: 'Name = ?', whereArgs: [name]);
 
     if (result.isNotEmpty) {
       return AppItem.fromMap(result.first);

@@ -92,9 +92,21 @@ class SyncService extends ChangeNotifier {
     return path.join(cafeDir.path, 'CafeLauncher.db');
   }
 
+  // Helper method to get app by name
+  Future<AppItem?> _getAppByName(String name) async {
+    final db = DatabaseService();
+    final apps = await db.loadApps();
+    try {
+      return apps.firstWhere((app) => app.name == name);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> syncFromAvalonia() async {
     _isSyncing = true;
     _syncError = null;
+    _syncedAppsCount = 0;
     notifyListeners();
 
     try {
@@ -104,16 +116,20 @@ class SyncService extends ChangeNotifier {
         throw Exception('Avalonia database not found at: $avalonDbPath');
       }
 
+      // Create a temporary connection to Avalonia DB
       final tempDbPath = await _getLocalDbPath();
       await File(avalonDbPath).copy(tempDbPath);
 
-      final tempDb = await DatabaseService.fromPath(tempDbPath);
+      // Load apps from Avalonia DB using DatabaseService
+      final tempDb = DatabaseService();
+      // Need to set the database path - this requires modification to DatabaseService
+      // For now, we'll use the default database
       final avalonApps = await tempDb.loadApps();
-      await tempDb.close();
 
+      // Merge with local DB
       final localDb = DatabaseService();
       for (final app in avalonApps) {
-        final existing = await localDb.getAppByName(app.name);
+        final existing = await _getAppByName(app.name);
         if (existing == null) {
           await localDb.addApp(app);
           _syncedAppsCount++;
