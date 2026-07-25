@@ -1,1 +1,19 @@
 include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  errors:
+    unused_import: warning
+    unused_local_variable: warning
+    dead_code: error
+
+linter:
+  rules:
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_fields
+    - use_key_in_widget_constructors
+    - prefer_single_quotes
+    - sort_pub_dependencies
