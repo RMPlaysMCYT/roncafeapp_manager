@@ -137,7 +137,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
                             });
                           },
                           backgroundColor: Colors.grey[900],
-                          selectedColor: category.color.withOpacity(0.3),
+                          selectedColor: category.color.withValues(alpha: 0.3),
                           checkmarkColor: Colors.white,
                           labelStyle: TextStyle(
                             color: isSelected ? Colors.white : Colors.grey[300],
@@ -480,7 +480,7 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
       decoration: BoxDecoration(
         color: Colors.blue.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue.withOpacity(0.3)),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

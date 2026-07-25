@@ -95,7 +95,12 @@ class _NavigationBarState extends State<RonCafeNavigationBarWidget> {
                   SizedBox(height: 4.0),
                   Text(
                     creator,
-                    style: TextStyle(fontSize: 10.0, color: Colors.grey),
+                    style: TextStyle(fontSize: 14.0, color: Colors.grey),
+                  ),
+                  SizedBox(height: 24.0),
+                  Text(
+                    version,
+                    style: TextStyle(fontSize: 20.0, color: Colors.grey),
                   ),
                 ],
               ),

@@ -5,3 +5,4 @@ const String cat3 = 'Games';
 const String cat4 = 'Customize';
 const String cat5 = 'Announcements';
 const String cat6 = 'Settings';
+const String version = '1.0.0';
