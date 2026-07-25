@@ -25,18 +25,17 @@ jobs:
       - name: Build Windows
         run: flutter build windows --release
       
-      - name: Install MSIX tool
-        run: dart pub global activate msix
-      
-      - name: Create MSIX
-        run: dart pub global run msix:create --install-certificate false
+      # REMOVED the msix steps and added this Inno Setup compilation step
+      - name: Compile Inno Setup Installer
+        # iscc is the command line compiler for Inno Setup (pre-installed on the runner)
+        run: iscc installer.iss
       
       - name: Upload Windows Artifact to Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          # You MUST use forward slashes (/) here, or the globber won't find it
-          files: build/windows/x64/runner/Release/*.msix
+          # Now we upload the generated .exe installer from the Output folder!
+          files: Output/RonCafeAppManager_Installer.exe
 
   build-macos:
     runs-on: macos-latest
