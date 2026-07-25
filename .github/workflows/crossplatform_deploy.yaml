@@ -12,7 +12,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: subosito/flutter-action@v2
         with:
@@ -26,18 +26,20 @@ jobs:
         run: flutter build windows --release
       
       - name: Create MSIX
-        run: flutter pub run msix:create
+        # 'flutter pub run' is deprecated; use 'dart run'
+        run: dart run msix:create
       
       - name: Upload Windows Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-app
-          path: build/windows/runner/Release/
+          # Upload only the MSIX file, not the whole release folder
+          path: build\windows\runner\Release\*.msix
 
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: subosito/flutter-action@v2
         with:
@@ -55,7 +57,7 @@ jobs:
           hdiutil create -volname "RonCafeAppManager" -srcfolder build/macos/Build/Products/Release/RonCafeAppManager.app -ov -format UDZO RonCafeAppManager.dmg
       
       - name: Upload macOS Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-app
           path: RonCafeAppManager.dmg
@@ -63,7 +65,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - uses: subosito/flutter-action@v2
         with:
@@ -83,15 +85,41 @@ jobs:
       
       - name: Create AppImage
         run: |
-          # Install AppImage tool
+          # 1. Download AppImage tool
           wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
           
-          # Package into AppImage
-          ./appimagetool-x86_64.AppImage build/linux/x64/release/bundle/ RonCafeAppManager.AppImage
+          # 2. Create the required AppDir structure
+          mkdir -p AppDir/usr/bin
+          cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
+          
+          # 3. Create the AppRun script
+          cat << 'EOF' > AppDir/AppRun
+          #!/bin/sh
+          cd "$(dirname "$0")"/usr/bin
+          # NOTE: Update 'ron_cafe_app_manager' if your executable name is different
+          ./ron_cafe_app_manager 
+          EOF
+          chmod +x AppDir/AppRun
+          
+          # 4. Create the .desktop file
+          cat << 'EOF' > AppDir/roncafe.desktop
+          [Desktop Entry]
+          Type=Application
+          Name=Ron Cafe App Manager
+          Exec=AppRun
+          Icon=icon
+          Categories=Utility;
+          EOF
+          
+          # 5. Create a dummy icon (AppImage tool requires an icon to compile)
+          touch AppDir/icon.png
+          
+          # 6. Package into AppImage
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir RonCafeAppManager.AppImage
       
       - name: Upload Linux Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-app
           path: RonCafeAppManager.AppImage
