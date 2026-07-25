@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:roncafeapp_manager/models/app_item.dart';
+import 'package:roncafeapp_manager/screens/__addprogram.dart';
 import 'package:roncafeapp_manager/widgets/table_widget.dart';
 import 'package:roncafeapp_manager/services/database_services.dart';
 
@@ -42,38 +43,13 @@ class _GamesScreenState extends State<GamesScreen> {
       ),
       body: Column(
         children: [
-          // Category filter dropdown
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                const Text(
-                  'Filter: ',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ),
           // Table
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : AppTableWidget(
-                    apps: _apps,
-                  ),
+                : AppTableWidget(apps: _apps),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          
-        },
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Add App'),
       ),
     );
   }

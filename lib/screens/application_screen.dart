@@ -98,16 +98,6 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Navigate to add application screen
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Add new application')),
-          );
-        },
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Add App'),
-      ),
     );
   }
 }
