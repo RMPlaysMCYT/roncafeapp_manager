@@ -30,27 +30,27 @@ class _NavigationBarState extends State<RonCafeNavigationBarWidget> {
   final List<NavigationRailDestination> _destinations = const [
     NavigationRailDestination(
       icon: Icon(Icons.dashboard_rounded),
-      label: Text('Dashboard'),
+      label: Text(cat1),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.apps_rounded),
-      label: Text('Applications'),
+      label: Text(cat2),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.sports_esports_rounded),
-      label: Text('Games'),
+      label: Text(cat3),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.palette_rounded),
-      label: Text('Customize'),
+      label: Text(cat4),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.announcement_rounded),
-      label: Text('Announcements'),
+      label: Text(cat5),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.settings_rounded),
-      label: Text('Settings'),
+      label: Text(cat6),
     ),
   ];
 

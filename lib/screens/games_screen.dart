@@ -1,16 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:roncafeapp_manager/models/app_item.dart';
+import 'package:roncafeapp_manager/widgets/table_widget.dart';
+import 'package:roncafeapp_manager/services/database_services.dart';
 
-class GamesScreen extends StatelessWidget {
+class GamesScreen extends StatefulWidget {
   const GamesScreen({super.key});
+
+  @override
+  State<GamesScreen> createState() => _GamesScreenState();
+}
+
+class _GamesScreenState extends State<GamesScreen> {
+  List<AppItem> _apps = [];
+  bool _isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    _loadApps();
+  }
+
+  Future<void> _loadApps() async {
+    final db = DatabaseService();
+    final apps = await db.loadApps();
+    setState(() {
+      _apps = apps;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Games Section'),
+        title: const Text('Applications'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: _loadApps,
+          ),
+        ],
       ),
-      body: const Center(
-        child: Text('Welcome to the Games Section!'),
+      body: Column(
+        children: [
+          // Category filter dropdown
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                const Text(
+                  'Filter: ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+            ),
+          ),
+          // Table
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : AppTableWidget(
+                    apps: _apps,
+                  ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          
+        },
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Add App'),
       ),
     );
   }
