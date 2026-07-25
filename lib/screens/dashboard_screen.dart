@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:roncafeapp_manager/screens/__addprogram.dart';
 import 'package:roncafeapp_manager/screens/__customize_screen.dart';
 import 'package:roncafeapp_manager/services/database_services.dart';
+import 'package:roncafeapp_manager/widgets/dashboard_cards2.dart';
+import 'package:roncafeapp_manager/widgets/quick_action_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,15 +24,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _loadStats();
   }
 
-  Future<void> _loadStats() async {
-    final db = DatabaseService();
-    final apps = await db.loadApps();
-    setState(() {
-      _appCount = apps.length;
-      _gameCount = apps.where((a) => a.category == 'Games').length;
-      _isLoading = false;
-    });
-  }
+Future<void> _loadStats() async {
+  final db = DatabaseService();
+  final apps = await db.loadApps();
+  setState(() {
+    _appCount = apps.length;
+    _gameCount = apps.where((a) => a.category == 'Games').length;
+    // _runningCount = apps.where((a) => a.isRunning == true).length; // Add this
+    _isLoading = false;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -53,32 +56,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      _buildStatCard(
-                        '📱 Total Apps',
-                        _appCount.toString(),
-                        Colors.blue,
+                      DashboardCards2(
+                        title: '📱 Total Apps',
+                        value: _appCount.toString(),
+                        color: Colors.blue,
                       ),
                       const SizedBox(width: 16),
-                      _buildStatCard(
-                        '🎮 Games',
-                        _gameCount.toString(),
-                        Colors.green,
+                      DashboardCards2(
+                        title: '🎮 Games',
+                        value: _gameCount.toString(),
+                        color: Colors.green,
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      _buildStatCard(
-                        '🔄 Running',
-                        _runningCount.toString(),
-                        Colors.orange,
+                      DashboardCards2(
+                        title: '🔄 Running',
+                        value: _runningCount.toString(),
+                        color: Colors.orange,
                       ),
                       const SizedBox(width: 16),
-                      _buildStatCard(
-                        '📊 Categories',
-                        '${_appCount > 0 ? 1 : 0}',
-                        Colors.purple,
+                      DashboardCards2(
+                        title: '📊 Categories',
+                        value: '${_appCount > 0 ? 1 : 0}',
+                        color: Colors.purple,
                       ),
                     ],
                   ),
@@ -101,11 +104,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          _buildQuickAction(
-                            '➕ Add New Application',
-                            Icons.add_rounded,
-                            Colors.blue,
-                            () {
+                          QuickActionWidget(
+                            text: '➕ Add New Application',
+                            icon: Icons.add_rounded,
+                            backgroundColor: Colors.blue,
+                            onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -116,25 +119,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                           ),
                           const Divider(),
-                          _buildQuickAction(
-                            '🔄 Sync with Avalonia',
-                            Icons.sync_rounded,
-                            Colors.green,
-                            () {
+                          QuickActionWidget(
+                            text: '🔄 Sync with Avalonia',
+                            icon: Icons.sync_rounded,
+                            backgroundColor: Colors.green,
+                            onTap: () {
                               // Trigger sync
                             },
                           ),
                           const Divider(),
-                          _buildQuickAction(
-                            '🎨 Customize Theme',
-                            Icons.palette_rounded,
-                            Colors.purple,
-                            () {
+                          QuickActionWidget(
+                            text: '🎨 Customize Theme',
+                            icon: Icons.palette_rounded,
+                            backgroundColor: Colors.purple,
+                            onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CustomizeScreen(),
+                                  builder: (context) => const CustomizeScreen(),
                                 ),
                               );
                             },
@@ -146,66 +148,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildStatCard(String title, String value, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.grey[900],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildQuickAction(
-    String title,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    // Fixed: Wrap ListTile with Material and add a background
-    return Material(
-      color: Colors.transparent,
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: color),
-        ),
-        title: Text(title),
-        trailing: const Icon(Icons.chevron_right_rounded),
-        onTap: onTap,
-        // Add these to fix the warning
-        tileColor: Colors.transparent,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
     );
   }
 }

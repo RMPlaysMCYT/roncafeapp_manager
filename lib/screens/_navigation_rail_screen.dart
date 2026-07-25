@@ -5,6 +5,7 @@ import 'package:roncafeapp_manager/screens/customization_screen.dart';
 import 'package:roncafeapp_manager/screens/dashboard_screen.dart';
 import 'package:roncafeapp_manager/screens/games_screen.dart';
 import 'package:roncafeapp_manager/screens/settings_screen.dart';
+import 'package:roncafeapp_manager/utilities/texts.dart';
 import 'package:roncafeapp_manager/widgets/sync_status_widget.dart'; // Add this
 
 class RonCafeNavigationBarWidget extends StatefulWidget {
@@ -93,7 +94,7 @@ class _NavigationBarState extends State<RonCafeNavigationBarWidget> {
                   SyncStatusWidget(),
                   SizedBox(height: 4.0),
                   Text(
-                    'Created By Ronnel S. Mitra',
+                    creator,
                     style: TextStyle(fontSize: 10.0, color: Colors.grey),
                   ),
                 ],
