@@ -35,7 +35,8 @@ jobs:
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: build/windows/runner/Release/*.msix
+          # Added the x64 folder and kept the forward slashes
+          files: build/windows/x64/runner/Release/*.msix
 
   build-macos:
     runs-on: macos-latest
