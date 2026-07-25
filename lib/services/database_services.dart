@@ -6,7 +6,6 @@ import 'package:roncafeapp_manager/models/launcher_config.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
