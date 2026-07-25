@@ -31,12 +31,11 @@ jobs:
       - name: Create MSIX
         run: dart pub global run msix:create --install-certificate false
       
-      - name: Upload Windows Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Windows Artifact to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
         with:
-          name: windows-app
-          # Upload only the MSIX file, not the whole release folder
-          path: build\windows\runner\Release\*.msix
+          files: build\windows\runner\Release\*.msix
 
   build-macos:
     runs-on: macos-latest
@@ -62,11 +61,11 @@ jobs:
           # Use the dynamically found path to create the DMG
           hdiutil create -volname "RonCafeAppManager" -srcfolder "$APP_PATH" -ov -format UDZO RonCafeAppManager.dmg
       
-      - name: Upload macOS Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload macOS Artifact to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
         with:
-          name: macos-app
-          path: RonCafeAppManager.dmg
+          files: RonCafeAppManager.dmg
 
   build-linux:
     runs-on: ubuntu-latest
@@ -124,8 +123,8 @@ jobs:
           # 6. Package into AppImage
           ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir RonCafeAppManager.AppImage
       
-      - name: Upload Linux Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Linux Artifact to Release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
         with:
-          name: linux-app
-          path: RonCafeAppManager.AppImage
+          files: RonCafeAppManager.AppImage
