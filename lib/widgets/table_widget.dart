@@ -43,7 +43,7 @@ class AppTableWidget extends StatelessWidget {
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: DataTable(
-          columnSpacing: 20,
+          columnSpacing: 150,
           horizontalMargin: 12,
           headingRowColor: MaterialStateProperty.resolveWith(
             (states) => Colors.grey[900],
