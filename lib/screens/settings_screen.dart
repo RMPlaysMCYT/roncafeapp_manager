@@ -9,13 +9,29 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Settings',
-          style: TextStyle(fontWeight: FontWeight(700)),
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [],
+          children: [
+            Column(
+              children: [
+                Text('Change'),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.import_contacts),
+                      onPressed: () {
+                        print('TEST MAINWINDOW1');
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

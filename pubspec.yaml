@@ -7,6 +7,7 @@ environment:
   sdk: ^3.12.2
 
 dependencies:
+
   flutter:
     sdk: flutter
   sqflite: ^2.3.0
@@ -15,12 +16,15 @@ dependencies:
   path_provider: ^2.1.0
   provider: ^6.1.0
   file_picker: ^6.1.1
+  grpc: ^5.1.0
+  protobuf: ^6.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   icons_launcher: ^1.2.1 
+  protoc_plugin: any
 
 flutter:
   uses-material-design: true
