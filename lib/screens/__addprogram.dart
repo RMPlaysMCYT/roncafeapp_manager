@@ -64,7 +64,10 @@ class _AddProgramScreenState extends State<AddProgramScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Program' : 'Add Program'),
+        title: Text(
+          _isEditing ? 'Edit Program' : 'Add Program',
+          style: const TextStyle(fontWeight: FontWeight(700)),
+        ),
         backgroundColor: const Color(0xFF181825),
         foregroundColor: Colors.white,
         actions: [

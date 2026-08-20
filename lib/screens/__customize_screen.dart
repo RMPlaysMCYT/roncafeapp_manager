@@ -49,7 +49,8 @@ class _CustomizeScreenState extends State<CustomizeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customize Launcher'),
+        title: const Text('Customize Launcher',
+          style: TextStyle(fontWeight: FontWeight(700)),),
         backgroundColor: const Color(0xFF181825),
         foregroundColor: Colors.white,
         actions: [
